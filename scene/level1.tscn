@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://bq7l37wg03sq4"]
+[gd_scene load_steps=7 format=3 uid="uid://bq7l37wg03sq4"]
 
 [ext_resource type="PackedScene" uid="uid://cqnmh8j8egrjg" path="res://player/player.tscn" id="1_446fn"]
 [ext_resource type="Texture2D" uid="uid://iry6keggqenv" path="res://asset/place/platformer.png" id="2_fwul8"]
 [ext_resource type="PackedScene" uid="uid://bqhq1m3vky18d" path="res://Enemy/enemy.tscn" id="3_fwul8"]
+[ext_resource type="PackedScene" uid="uid://dsimak85oj4di" path="res://scene/door.tscn" id="4_0a4uc"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_0a4uc"]
 texture = ExtResource("2_fwul8")
@@ -132,5 +133,11 @@ layer_0/tile_data = PackedInt32Array(1835008, 196608, 0, 1835009, 131072, 0, 183
 [node name="player" parent="." instance=ExtResource("1_446fn")]
 position = Vector2(194, 195)
 
+[node name="Enemy2" parent="." instance=ExtResource("3_fwul8")]
+position = Vector2(382, 197)
+
 [node name="Enemy" parent="." instance=ExtResource("3_fwul8")]
-position = Vector2(340, 202)
+position = Vector2(622, 192)
+
+[node name="door" parent="." instance=ExtResource("4_0a4uc")]
+position = Vector2(487, 176)
