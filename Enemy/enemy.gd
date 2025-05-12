@@ -25,6 +25,8 @@ func _physics_process(delta):
 		velocity.y += GRAVITY * delta
 
 	move_and_slide()
+	
+
 
 func _on_enemy_area_entered(area: Area2D):
 	if area.is_in_group("player"):
