@@ -10,7 +10,7 @@ radius = 14.0
 radius = 85.1469
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_eqilm"]
-radius = 48.0104
+radius = 19.0263
 
 [node name="Enemy" type="CharacterBody2D" groups=["enemy"]]
 script = ExtResource("1_px1sc")
@@ -37,8 +37,12 @@ one_shot = true
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Deadzone"]
 shape = SubResource("CircleShape2D_eqilm")
 
+[node name="DamageCooldownTimer" type="Timer" parent="."]
+one_shot = true
+
 [connection signal="area_entered" from="Area2D" to="." method="_on_area_2d_area_entered"]
 [connection signal="area_exited" from="Area2D" to="." method="_on_area_2d_area_exited"]
 [connection signal="timeout" from="FlashTimer" to="." method="_on_flash_timer_timeout"]
 [connection signal="body_entered" from="Deadzone" to="." method="_on_deadzone_body_entered"]
 [connection signal="body_exited" from="Deadzone" to="." method="_on_deadzone_body_exited"]
+[connection signal="timeout" from="DamageCooldownTimer" to="." method="_on_damage_cooldown_timer_timeout"]

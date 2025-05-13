@@ -1,0 +1,26 @@
+[gd_scene load_steps=6 format=3 uid="uid://c0jbatolpgts8"]
+
+[ext_resource type="Script" uid="uid://cfpinfylosr6e" path="res://scene/lever.gd" id="1_3q165"]
+[ext_resource type="Texture2D" uid="uid://dco6mon6dawck" path="res://asset/place/lever_on.png" id="2_0swr6"]
+[ext_resource type="Texture2D" uid="uid://diwimckpxfm1d" path="res://asset/place/lever_off.png" id="3_5u48r"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_3q165"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_5p3dk"]
+radius = 32.0
+
+[node name="lever" type="Area2D" groups=["lever"]]
+script = ExtResource("1_3q165")
+on_texture = ExtResource("2_0swr6")
+off_texture = ExtResource("3_5u48r")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(0.148438, -0.171875)
+scale = Vector2(-0.304688, 0.367188)
+texture = SubResource("ViewportTexture_3q165")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_5p3dk")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="body_exited" from="." to="." method="_on_body_exited"]

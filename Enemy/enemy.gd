@@ -4,9 +4,6 @@ var is_possessed = false
 var player = null
 var original_modulate := Color(1, 1, 1)
 
-@onready var deadzone = $Deadzone
-@onready var player_node = $"../player"
-@onready var enemy_area = $EnemyArea
 @onready var flash_timer = $FlashTimer
 
 const SPEED = 200.0
@@ -43,16 +40,17 @@ func _on_flash_timer_timeout():
 	modulate = original_modulate
 
 func _on_deadzone_body_entered(body):
-	if body.name == "player" and not is_possessed:
-		player_node.player_health -= 10
-
-func _on_deadzone_body_exited(body):
-	if body.name == "player" and not is_possessed:
-		deadzone.monitoring = true
+	print("Deadzone contact with:", body.name)
+	if body.is_in_group("player") and not is_possessed:
+		if body.has_method("take_damage"):
+			body.take_damage(3)
+		else:
+			push_error("Player has no damage handling!")
 
 func on_possess():
 	is_possessed = true
-	deadzone.monitoring = false
+	$Deadzone.set_deferred("monitoring", false)
 
 func on_unpossess():
 	is_possessed = false
+	$Deadzone.set_deferred("monitoring", true)
