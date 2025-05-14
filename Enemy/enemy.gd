@@ -5,6 +5,7 @@ var player = null
 var original_modulate := Color(1, 1, 1)
 
 @onready var flash_timer = $FlashTimer
+@onready var possessing_sound = $Possessing
 
 const SPEED = 200.0
 const GRAVITY = 980
@@ -13,23 +14,30 @@ func _physics_process(delta):
 	if is_possessed:
 		return
 
+	# --- CHASE AI: only move when 'player' is non-null ---
 	if player != null:
 		var direction = sign(player.global_position.x - global_position.x)
 		velocity.x = direction * SPEED
 	else:
 		velocity.x = 0
 
+	# gravity
 	if not is_on_floor():
 		velocity.y += GRAVITY * delta
 
 	move_and_slide()
 
-func _on_enemy_area_entered(area: Area2D):
-	if area.is_in_group("player"):
-		player = area.get_parent()
+# These two methods must be connected to your ChasePlayer Area2D:
+#  • body_entered → _on_ChasePlayer_body_entered
+#  • body_exited  → _on_ChasePlayer_body_exited
 
-func _on_enemy_area_exited(area: Area2D):
-	if area.get_parent() == player:
+func _on_ChasePlayer_body_entered(body: Node):
+	if body.is_in_group("player"):
+		# assume the Area2D’s immediate parent is the Player node
+		player = body.get_parent()
+
+func _on_ChasePlayer_body_exited(body: Node):
+	if body.get_parent() == player:
 		player = null
 
 func flash_white():

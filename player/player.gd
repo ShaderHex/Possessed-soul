@@ -1,4 +1,3 @@
-#TODO: fix the bug where the enemy can't control lever
 extends CharacterBody2D
 
 var player_health := 10
@@ -15,8 +14,10 @@ const GRAVITY = 980
 @onready var collision_shape_2d = $CollisionShape2D
 @onready var camera_2d = $Camera2D
 @onready var health_ui = $"../CanvasLayer/HealthUI"
+@onready var player_sprite = $AnimatedSprite2D
 
 func _ready():
+	player_sprite.play("default")
 	health_ui.text = str(player_health)
 	$player_area.area_entered.connect(_on_player_area_entered)
 	$player_area.area_exited.connect(_on_player_area_exited)
@@ -24,10 +25,17 @@ func _ready():
 
 func _process(delta):
 	health_ui.text = str(player_health)
-	camera_2d.global_position = enemy.global_position if is_possessed else global_position
-	
+
+	if is_possessed and enemy:
+		camera_2d.global_position = enemy.global_position
+		$player_area.global_position = enemy.global_position
+	else:
+		camera_2d.global_position = global_position
+		$player_area.global_position = global_position
+
 	if player_health <= 0:
 		print("Player died!")
+
 
 func _physics_process(delta):
 	if is_possessed and enemy:
@@ -47,19 +55,29 @@ func handle_possessed_movement(delta):
 	enemy.move_and_slide()
 
 func handle_normal_movement(delta):
-	var direction = Input.get_axis("ui_left", "ui_right")
-	velocity.x = direction * SPEED if direction else move_toward(velocity.x, 0, SPEED)
+	var direction = 0
 	
+	if Input.is_action_pressed("ui_left"):
+		direction -= 1
+	if Input.is_action_pressed("ui_right"):
+		direction += 1
+
+	velocity.x = direction * SPEED
+
+	if direction != 0:
+		player_sprite.flip_h = direction > 0
+
 	if not is_on_floor():
 		velocity.y += GRAVITY * delta
-	
+
+	# Jump
 	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
-	
+
 	move_and_slide()
 
+
 func _on_player_area_entered(area: Area2D):
-	# Lever detection fix
 	if area.is_in_group("lever"):
 		print("LEVER ENTERED!")
 		if not in_range_levers.has(area):
@@ -106,22 +124,25 @@ func get_closest_enemy():
 	return closest
 
 func possess_enemy():
+	enemy.possessing_sound.play()
 	is_possessed = true
-	hide()
 	collision_shape_2d.disabled = true
-	enemy.on_possess()
 	current_zoom_level += 0.1
 	camera_2d.zoom = Vector2(current_zoom_level, current_zoom_level)
+	player_sprite.play("possessing")
+	await player_sprite.animation_finished
+	hide()
+	enemy.on_possess()
 
 func unpossess_enemy():
 	is_possessed = false
+	player_sprite.play("default")
 	show()
 	collision_shape_2d.disabled = false
 	global_position = enemy.global_position + Vector2(64, -50)
 	enemy.on_unpossess()
 	enemy = null
-	current_zoom_level -= 0.1
-	camera_2d.zoom = Vector2(current_zoom_level, current_zoom_level)
+
 
 func take_damage(amount: int):
 	player_health = max(player_health - amount, 0)
