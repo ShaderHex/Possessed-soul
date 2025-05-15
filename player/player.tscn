@@ -1,8 +1,9 @@
-[gd_scene load_steps=28 format=3 uid="uid://cqnmh8j8egrjg"]
+[gd_scene load_steps=29 format=3 uid="uid://cqnmh8j8egrjg"]
 
 [ext_resource type="Script" uid="uid://bq7nw4lsq2qp8" path="res://player/player.gd" id="1_rkbax"]
 [ext_resource type="Texture2D" uid="uid://crpog6cavd11a" path="res://player/pixil-frame-0.png" id="2_rkbax"]
 [ext_resource type="Texture2D" uid="uid://cm06dyxnlbok3" path="res://asset/player/pixilart-sprite.png" id="3_yw30f"]
+[ext_resource type="Texture2D" uid="uid://buajddefb626u" path="res://asset/light.png" id="4_yw30f"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fwul8"]
 size = Vector2(16, 17)
@@ -173,7 +174,7 @@ animations = [{
 [sub_resource type="CircleShape2D" id="CircleShape2D_rkbax"]
 radius = 29.0
 
-[node name="player" type="CharacterBody2D"]
+[node name="player" type="CharacterBody2D" groups=["player"]]
 script = ExtResource("1_rkbax")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -195,5 +196,21 @@ position_smoothing_enabled = true
 [node name="CollisionShape2D" type="CollisionShape2D" parent="player_area"]
 shape = SubResource("CircleShape2D_rkbax")
 
+[node name="PossessTime" type="Timer" parent="."]
+process_callback = 0
+wait_time = 20.0
+one_shot = true
+
+[node name="PossessHalfTime" type="Timer" parent="."]
+process_callback = 0
+wait_time = 10.0
+one_shot = true
+
+[node name="PointLight2D" type="PointLight2D" parent="."]
+texture = ExtResource("4_yw30f")
+texture_scale = 0.6
+
 [connection signal="area_entered" from="player_area" to="." method="_on_player_area_entered"]
 [connection signal="area_exited" from="player_area" to="." method="_on_player_area_exited"]
+[connection signal="timeout" from="PossessTime" to="." method="_on_possess_time_timeout"]
+[connection signal="timeout" from="PossessHalfTime" to="." method="_on_possess_half_time_timeout"]

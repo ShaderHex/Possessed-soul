@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://bbwasmgjar5og"]
+
+[ext_resource type="Script" uid="uid://be6bxy6s04sda" path="res://rigid_body_2d.gd" id="1_qjxkl"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_v4qwc"]
+
+[node name="RigidBody2D" type="RigidBody2D"]
+script = ExtResource("1_qjxkl")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_v4qwc")
+
+[node name="LifetimeTimer" type="Timer" parent="."]

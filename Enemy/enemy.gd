@@ -27,17 +27,13 @@ func _physics_process(delta):
 
 	move_and_slide()
 
-# These two methods must be connected to your ChasePlayer Area2D:
-#  • body_entered → _on_ChasePlayer_body_entered
-#  • body_exited  → _on_ChasePlayer_body_exited
 
 func _on_ChasePlayer_body_entered(body: Node):
 	if body.is_in_group("player"):
-		# assume the Area2D’s immediate parent is the Player node
-		player = body.get_parent()
+		player = body
 
 func _on_ChasePlayer_body_exited(body: Node):
-	if body.get_parent() == player:
+	if body == player:
 		player = null
 
 func flash_white():
