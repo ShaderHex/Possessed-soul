@@ -14,7 +14,6 @@ func _ready():
 func _process(delta):
 	pass
 
-
 func _on_audio_stream_player_2d_finished():
 	background_sound.play()
 	print("Finished restarting...")

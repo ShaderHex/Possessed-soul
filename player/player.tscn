@@ -207,8 +207,9 @@ wait_time = 10.0
 one_shot = true
 
 [node name="PointLight2D" type="PointLight2D" parent="."]
+energy = 3.6
 texture = ExtResource("4_yw30f")
-texture_scale = 0.6
+texture_scale = 1.2
 
 [connection signal="area_entered" from="player_area" to="." method="_on_player_area_entered"]
 [connection signal="area_exited" from="player_area" to="." method="_on_player_area_exited"]

@@ -6,30 +6,32 @@ var original_modulate := Color(1, 1, 1)
 
 @onready var flash_timer = $FlashTimer
 @onready var possessing_sound = $Possessing
+@onready var player_node = $"../player"
 
-const SPEED = 200.0
+const SPEED = 80.0
 const GRAVITY = 980
 
 func _physics_process(delta):
 	if is_possessed:
 		return
 
-	# --- CHASE AI: only move when 'player' is non-null ---
 	if player != null:
 		var direction = sign(player.global_position.x - global_position.x)
 		velocity.x = direction * SPEED
 	else:
 		velocity.x = 0
 
-	# gravity
 	if not is_on_floor():
 		velocity.y += GRAVITY * delta
+	else:
+		velocity.y = 0
 
 	move_and_slide()
 
-
 func _on_ChasePlayer_body_entered(body: Node):
-	if body.is_in_group("player"):
+	print("Body entered the enemy: ", body)
+	if body.name == "player_area" && !player_node.is_possessed:
+		print("Following!")
 		player = body
 
 func _on_ChasePlayer_body_exited(body: Node):
@@ -57,4 +59,13 @@ func on_possess():
 
 func on_unpossess():
 	is_possessed = false
+	move_light_to_player()
 	$Deadzone.set_deferred("monitoring", true)
+
+func move_light_to_player():
+	var light = $PointLight2D
+
+	if light and player_node:
+		light.get_parent().remove_child(light)
+		player_node.add_child(light)
+		light.global_position = player_node.global_position

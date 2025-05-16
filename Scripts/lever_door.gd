@@ -22,4 +22,4 @@ func update_door_visual():
 		sprite.texture = off_texture
 		
 	
-	$StaticBody2D/CollisionShape2D.disabled = is_open  # Disable collision when open
+	$StaticBody2D/CollisionShape2D.disabled = is_open

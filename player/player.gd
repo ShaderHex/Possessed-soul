@@ -1,3 +1,7 @@
+# ladies and gentlement, this code is fucked up
+# if i ever made this opensource, don't take anything from this instead try to fix it
+# this way you'll learn a lot more than trying to make similar system, anyways it works
+
 extends CharacterBody2D
 
 var player_health := 10
@@ -10,8 +14,9 @@ var zoom_rate := 0.1
 var shake_intensity = 0.0
 var is_zooming_and_shaking = false
 var possess_hold_time := 0.0
-var possess_threshold := 1.0
+var possess_threshold := 0.5
 var camera_y_offset = -50
+var slip_strength := 50
 
 const SPEED = 200.0
 const JUMP_VELOCITY = -400.0
@@ -23,7 +28,7 @@ const MIN_ZOOM = 0.9
 @onready var health_ui = $"../CanvasLayer/HealthUI"
 @onready var player_sprite = $AnimatedSprite2D
 @onready var possess_half_time = $PossessHalfTime
-@onready var parallax_bg = $"../ParallaxBackground"  # Adjust path as needed
+@onready var parallax_bg = $"../ParallaxBackground"
 
 func _ready():
 	player_sprite.play("default")
@@ -183,6 +188,7 @@ func get_closest_enemy():
 func possess_enemy():
 	enemy.possessing_sound.play()
 	is_possessed = true
+	move_light_to_enemy()
 	collision_shape_2d.disabled = true
 	current_zoom_level += 0.1
 	camera_2d.zoom = Vector2(current_zoom_level, current_zoom_level)
@@ -243,3 +249,23 @@ func update_parallax_limits():
 		var view_width = get_viewport_rect().size.x / current_zoom_level
 		parallax_bg.limit_left = -view_width * 2
 		parallax_bg.limit_right = view_width * 2
+
+func move_light_to_enemy():
+	var light = $PointLight2D
+
+	if light and enemy:
+		light.get_parent().remove_child(light)
+		enemy.add_child(light)
+		light.global_position = enemy.global_position
+
+func apply_fan_effect():
+	var camera = $Camera2D
+	if camera:
+		camera.offset = Vector2(randf_range(-5, 5), randf_range(-5, 5))
+		await get_tree().create_timer(0.05).timeout
+		camera.offset = Vector2.ZERO
+
+	if global_position.x < $"../Vent".global_position.x:
+		velocity.x -= slip_strength
+	else:
+		velocity.x += slip_strength

@@ -1,17 +1,72 @@
-[gd_scene load_steps=8 format=3 uid="uid://bqhq1m3vky18d"]
+[gd_scene load_steps=15 format=3 uid="uid://bqhq1m3vky18d"]
 
-[ext_resource type="Texture2D" uid="uid://tacy0qxgfb76" path="res://Enemy/Enemylogo_square.webp" id="1_2pb1h"]
 [ext_resource type="Script" uid="uid://clhphkqftgrxp" path="res://Enemy/enemy.gd" id="1_px1sc"]
+[ext_resource type="Texture2D" uid="uid://c8cvd3dsrcoxk" path="res://asset/zombie/Zombie_SpriteSheet.png" id="2_am0pq"]
 [ext_resource type="AudioStream" uid="uid://cf34ygl6wtuf0" path="res://asset/audio/enemy/possessing.mp3" id="3_am0pq"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_am0pq"]
+atlas = ExtResource("2_am0pq")
+region = Rect2(0, 0, 26, 26)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ncf7h"]
+atlas = ExtResource("2_am0pq")
+region = Rect2(26, 0, 26, 26)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m6jha"]
+atlas = ExtResource("2_am0pq")
+region = Rect2(52, 0, 26, 26)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_glvfu"]
+atlas = ExtResource("2_am0pq")
+region = Rect2(78, 0, 26, 26)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0rspp"]
+atlas = ExtResource("2_am0pq")
+region = Rect2(104, 0, 26, 26)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eqilm"]
+atlas = ExtResource("2_am0pq")
+region = Rect2(0, 0, 26, 26)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ncf7h"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_am0pq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ncf7h")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m6jha")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_glvfu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0rspp")
+}],
+"loop": true,
+"name": &"chase",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eqilm")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_px1sc"]
 radius = 14.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_am0pq"]
-radius = 85.1469
+radius = 105.005
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_eqilm"]
-radius = 19.0263
+radius = 17.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ncf7h"]
 radius = 125.1
@@ -19,10 +74,12 @@ radius = 125.1
 [node name="Enemy" type="CharacterBody2D" groups=["enemy"]]
 script = ExtResource("1_px1sc")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(-0.1875, 0.5625)
-scale = Vector2(0.0417987, 0.0394216)
-texture = ExtResource("1_2pb1h")
+[node name="Sprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -5.96046e-08)
+scale = Vector2(1.46154, 1.30769)
+sprite_frames = SubResource("SpriteFrames_ncf7h")
+animation = &"chase"
+frame_progress = 0.534261
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_px1sc")

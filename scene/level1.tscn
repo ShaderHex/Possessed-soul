@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://bq7l37wg03sq4"]
+[gd_scene load_steps=18 format=3 uid="uid://bq7l37wg03sq4"]
 
 [ext_resource type="Script" uid="uid://5skufq2s4ngc" path="res://Scripts/level_1.gd" id="1_7lb8k"]
 [ext_resource type="PackedScene" uid="uid://cqnmh8j8egrjg" path="res://player/player.tscn" id="1_446fn"]
@@ -14,6 +14,7 @@
 [ext_resource type="Texture2D" uid="uid://dvfxcw7wd83gb" path="res://asset/Background/Plan 2.png" id="11_e6f45"]
 [ext_resource type="AudioStream" uid="uid://xalmqfoipajg" path="res://asset/audio/background/background-atmosphere.wav" id="12_3qsor"]
 [ext_resource type="AudioStream" uid="uid://dbikjjkblrnux" path="res://asset/audio/background/water-dripping.mp3" id="14_6i17f"]
+[ext_resource type="PackedScene" uid="uid://b5kehew2yh3tm" path="res://scene/Vent.tscn" id="15_wrpia"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_0a4uc"]
 texture = ExtResource("2_fwul8")
@@ -217,6 +218,9 @@ pitch_scale = 1.25
 [node name="CanvasModulate" type="CanvasModulate" parent="."]
 position = Vector2(240, 135)
 color = Color(0, 0.174479, 0.174479, 1)
+
+[node name="Vent" parent="." instance=ExtResource("15_wrpia")]
+position = Vector2(916, 193)
 
 [connection signal="finished" from="BackgroundSound" to="." method="_on_audio_stream_player_2d_finished"]
 [connection signal="finished" from="WaterDripping" to="." method="_on_water_dripping_finished"]
