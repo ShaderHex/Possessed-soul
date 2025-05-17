@@ -4,11 +4,14 @@ var is_possessed = false
 var player = null
 var original_modulate := Color(1, 1, 1)
 
+@onready var sprite_2d = $Sprite2D
 @onready var flash_timer = $FlashTimer
 @onready var possessing_sound = $Possessing
 @onready var player_node = $"../player"
 
-const SPEED = 80.0
+@export var isAttackable = true
+
+const SPEED = 50.0
 const GRAVITY = 980
 
 func _physics_process(delta):
@@ -18,28 +21,34 @@ func _physics_process(delta):
 	if player != null:
 		var direction = sign(player.global_position.x - global_position.x)
 		velocity.x = direction * SPEED
+
+		sprite_2d.flip_h = direction < 0
+		sprite_2d.play("chase")
 	else:
 		velocity.x = 0
+		sprite_2d.play("default")
 
 	if not is_on_floor():
 		velocity.y += GRAVITY * delta
 	else:
 		velocity.y = 0
-
+	
 	move_and_slide()
 
+
 func _on_ChasePlayer_body_entered(body: Node):
-	print("Body entered the enemy: ", body)
-	if body.name == "player_area" && !player_node.is_possessed:
-		print("Following!")
-		player = body
+	if isAttackable:
+		print("Body entered the enemy: ", body)
+		if body.name == "player_area" && !player_node.is_possessed:
+			print("Following!")
+			player = body
 
 func _on_ChasePlayer_body_exited(body: Node):
 	if body == player:
 		player = null
 
 func flash_white():
-	modulate = Color(1, 1, 1) * 2
+	modulate = Color(1, 1, 1) * 255
 	flash_timer.start()
 
 func _on_flash_timer_timeout():
@@ -47,11 +56,12 @@ func _on_flash_timer_timeout():
 
 func _on_deadzone_body_entered(body):
 	print("Deadzone contact with:", body.name)
-	if body.is_in_group("player") and not is_possessed:
-		if body.has_method("take_damage"):
-			body.take_damage(3)
-		else:
-			push_error("Player has no damage handling!")
+	if isAttackable:
+		if body.is_in_group("player") and not is_possessed:
+			if body.has_method("take_damage"):
+				body.take_damage(3, true)
+			else:
+				push_error("Player has no damage handling!")
 
 func on_possess():
 	is_possessed = true
@@ -69,3 +79,24 @@ func move_light_to_player():
 		light.get_parent().remove_child(light)
 		player_node.add_child(light)
 		light.global_position = player_node.global_position
+
+
+func possessed_move(input_vector: Vector2, delta: float):
+	if not is_possessed:
+		return
+	
+	velocity.x = input_vector.x * SPEED
+	sprite_2d.flip_h = input_vector.x < 0
+
+	# You can choose which animation to play based on input
+	if input_vector.x != 0:
+		sprite_2d.play("chase")
+	else:
+		sprite_2d.play("default")
+
+	if not is_on_floor():
+		velocity.y += GRAVITY * delta
+	else:
+		velocity.y = 0
+
+	move_and_slide()

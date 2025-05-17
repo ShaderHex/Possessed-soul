@@ -119,7 +119,7 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_satsv"]
-size = Vector2(67, 113.5)
+size = Vector2(67, 61.5)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_p7cob"]
 size = Vector2(61, 62)
@@ -136,7 +136,7 @@ frame_progress = 0.927858
 [node name="Area2D" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
-position = Vector2(-65, -27.25)
+position = Vector2(-65, -1.25)
 shape = SubResource("RectangleShape2D_satsv")
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]

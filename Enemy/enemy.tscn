@@ -1,12 +1,8 @@
-[gd_scene load_steps=15 format=3 uid="uid://bqhq1m3vky18d"]
+[gd_scene load_steps=14 format=3 uid="uid://bqhq1m3vky18d"]
 
 [ext_resource type="Script" uid="uid://clhphkqftgrxp" path="res://Enemy/enemy.gd" id="1_px1sc"]
 [ext_resource type="Texture2D" uid="uid://c8cvd3dsrcoxk" path="res://asset/zombie/Zombie_SpriteSheet.png" id="2_am0pq"]
 [ext_resource type="AudioStream" uid="uid://cf34ygl6wtuf0" path="res://asset/audio/enemy/possessing.mp3" id="3_am0pq"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_am0pq"]
-atlas = ExtResource("2_am0pq")
-region = Rect2(0, 0, 26, 26)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ncf7h"]
 atlas = ExtResource("2_am0pq")
@@ -31,9 +27,6 @@ region = Rect2(0, 0, 26, 26)
 [sub_resource type="SpriteFrames" id="SpriteFrames_ncf7h"]
 animations = [{
 "frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_am0pq")
-}, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ncf7h")
 }, {
@@ -62,8 +55,8 @@ animations = [{
 [sub_resource type="CircleShape2D" id="CircleShape2D_px1sc"]
 radius = 14.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_am0pq"]
-radius = 105.005
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_am0pq"]
+size = Vector2(20, 26)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_eqilm"]
 radius = 17.0
@@ -87,7 +80,8 @@ shape = SubResource("CircleShape2D_px1sc")
 [node name="Area2D" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
-shape = SubResource("CircleShape2D_am0pq")
+position = Vector2(2, 0)
+shape = SubResource("RectangleShape2D_am0pq")
 
 [node name="FlashTimer" type="Timer" parent="."]
 wait_time = 0.15
@@ -101,7 +95,7 @@ shape = SubResource("CircleShape2D_eqilm")
 [node name="DamageCooldownTimer" type="Timer" parent="."]
 one_shot = true
 
-[node name="ChasePlayer" type="Area2D" parent="."]
+[node name="ChasePlayer" type="Area2D" parent="." groups=["enemy"]]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ChasePlayer"]
 shape = SubResource("CircleShape2D_ncf7h")

@@ -28,16 +28,17 @@ func toggle():
 
 		for door_path in connected_doors:
 			var door = get_node(door_path)
-			if door:
+			if door and door.has_method("toggle_door"):
 				door.toggle_door()
 	else:
 		print("Toggle conditions not met.")
+		print(is_play_in_range)
+		print(interacting_enemy)
 
 func _on_body_entered(body):
 	if body.is_in_group("enemy"):
-		if body.is_possessed:
-			is_play_in_range = true
-			interacting_enemy = body
+		is_play_in_range = true
+		interacting_enemy = body
 
 func _on_body_exited(body):
 	if body == interacting_enemy:

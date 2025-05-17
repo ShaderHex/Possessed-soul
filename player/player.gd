@@ -2,7 +2,13 @@
 # if i ever made this opensource, don't take anything from this instead try to fix it
 # this way you'll learn a lot more than trying to make similar system, anyways it works
 
+# also there is a spelling error, which i named shake_strengh instead of shake_strength
+# i'm too lazy to change it so yeah whatever it still does work fine
+
 extends CharacterBody2D
+
+@export var randomStrength: float = 5.0
+@export var shakeFade: float = 5.0
 
 var player_health := 10
 var is_possessed = false
@@ -17,6 +23,9 @@ var possess_hold_time := 0.0
 var possess_threshold := 0.5
 var camera_y_offset = -50
 var slip_strength := 50
+var rng = RandomNumberGenerator.new()
+var shake_strengh: float = 0.0
+var is_possessing_animation_running = false
 
 const SPEED = 200.0
 const JUMP_VELOCITY = -400.0
@@ -29,6 +38,7 @@ const MIN_ZOOM = 0.9
 @onready var player_sprite = $AnimatedSprite2D
 @onready var possess_half_time = $PossessHalfTime
 @onready var parallax_bg = $"../ParallaxBackground"
+@onready var level_1 = $".."
 
 func _ready():
 	player_sprite.play("default")
@@ -37,7 +47,6 @@ func _ready():
 	$player_area.area_exited.connect(_on_player_area_exited)
 	add_to_group("player")
 
-	# Godot 4 camera smoothing
 	camera_2d.position_smoothing_enabled = true
 	camera_2d.position_smoothing_speed = 5.0
 
@@ -47,7 +56,6 @@ func _ready():
 func _process(delta):
 	health_ui.text = str(player_health)
 
-	# Camera positioning with Y offset
 	var target_position: Vector2
 	if is_possessed and enemy:
 		target_position = enemy.global_position
@@ -55,15 +63,16 @@ func _process(delta):
 		target_position = global_position
 
 	target_position.y += camera_y_offset
+
+	target_position.y = max(target_position.y, global_position.y)
+
 	camera_2d.global_position = camera_2d.global_position.lerp(target_position, delta * 5)
 	
-	# Player area positioning (without offset)
 	if is_possessed and enemy:
 		$player_area.global_position = enemy.global_position
 	else:
 		$player_area.global_position = global_position
 
-	# Zoom + Shake logic
 	if is_zooming_and_shaking:
 		current_zoom_level = clamp(current_zoom_level - zoom_rate * delta, MIN_ZOOM, 2.0)
 		camera_2d.zoom = Vector2(current_zoom_level, current_zoom_level)
@@ -76,7 +85,6 @@ func _process(delta):
 	else:
 		camera_2d.offset = Vector2.ZERO
 
-	# Possession hold logic
 	if Input.is_action_pressed("possess") and not is_possessed:
 		possess_hold_time += delta
 	if possess_hold_time >= possess_threshold and not is_possessed:
@@ -92,6 +100,15 @@ func _process(delta):
 		camera_2d.offset = Vector2.ZERO
 		update_parallax_limits()
 
+		level_1.get_tree().paused = true
+		await get_tree().create_timer(1.0).timeout
+
+		get_tree().change_scene_to_file("res://scene/death_animation.tscn")
+		
+	if shake_strengh > 0:
+		shake_strengh = lerpf(shake_strengh, 0, shakeFade * delta)
+		camera_2d.offset += randomOffset()
+
 func _physics_process(delta):
 	if is_possessed and enemy:
 		handle_possessed_movement(delta)
@@ -99,22 +116,41 @@ func _physics_process(delta):
 		handle_normal_movement(delta)
 
 func handle_possessed_movement(delta):
+	if not enemy:
+		return
+
 	if not enemy.is_on_floor():
 		enemy.velocity.y += GRAVITY * delta
 
 	if Input.is_action_just_pressed("ui_accept") and enemy.is_on_floor():
 		enemy.velocity.y = JUMP_VELOCITY
 
-	var direction = Input.get_axis("ui_left", "ui_right")
-	enemy.velocity.x = direction * SPEED if direction else move_toward(enemy.velocity.x, 0, SPEED)
+	var direction = Input.get_axis("left", "right")
+	if direction != 0:
+		enemy.velocity.x = direction * SPEED
+	else:
+		enemy.velocity.x = lerp(enemy.velocity.x, 0.0, delta * 10.0)
 	enemy.move_and_slide()
+
+	# === ANIMATION LOGIC ===
+	var sprite = enemy.get_node("Sprite2D")
+
+	if not enemy.is_on_floor():
+		sprite.play("jump")
+	elif direction != 0:
+		sprite.play("chase")
+	else:
+		sprite.play("default")
+
+	if direction != 0:
+		sprite.flip_h = direction < 0
 
 func handle_normal_movement(delta):
 	var direction = 0
 
-	if Input.is_action_pressed("ui_left"):
+	if Input.is_action_pressed("left"):
 		direction -= 1
-	if Input.is_action_pressed("ui_right"):
+	if Input.is_action_pressed("right"):
 		direction += 1
 
 	velocity.x = direction * SPEED
@@ -127,7 +163,10 @@ func handle_normal_movement(delta):
 
 	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
-
+	
+	if is_possessed:
+		enemy.sprite_2d.play("chase")
+	
 	move_and_slide()
 
 func _input(event):
@@ -135,7 +174,6 @@ func _input(event):
 		if is_possessed:
 			unpossess_enemy()
 		else:
-			# Start tracking hold time for possession
 			possess_hold_time = 0.0
 	elif event.is_action_released("possess"):
 		if not is_possessed and possess_hold_time >= possess_threshold:
@@ -184,8 +222,9 @@ func get_closest_enemy():
 			closest = e
 			closest_dist = dist
 	return closest
-
 func possess_enemy():
+	if enemy == null:
+		return
 	enemy.possessing_sound.play()
 	is_possessed = true
 	move_light_to_enemy()
@@ -193,33 +232,57 @@ func possess_enemy():
 	current_zoom_level += 0.1
 	camera_2d.zoom = Vector2(current_zoom_level, current_zoom_level)
 	update_parallax_limits()
+	
+	is_possessing_animation_running = true
 	player_sprite.play("possessing")
+	if enemy != null:
+		enemy.on_possess()
+		
 	await player_sprite.animation_finished
+
+	if not is_possessing_animation_running:
+		return
+	
 	hide()
-	enemy.on_possess()
 	$PossessTime.start()
 	$PossessHalfTime.start()
 
 func unpossess_enemy():
+	is_possessing_animation_running = false
 	is_possessed = false
 	player_sprite.play("default")
 	show()
 	collision_shape_2d.disabled = false
-	global_position = enemy.global_position + Vector2(64, -50)
-	enemy.on_unpossess()
-	enemy = null
+	
+	if enemy != null:
+		global_position = enemy.global_position + Vector2(64, -50)
+		enemy.on_unpossess()
+		enemy = null
+
 	$PossessTime.stop()
 	$PossessHalfTime.stop()
 	is_zooming_and_shaking = false
 	shake_intensity = 0.0
-	current_zoom_level = clamp(current_zoom_level + 0.1, MIN_ZOOM, 2.0)
-	camera_2d.zoom = Vector2(current_zoom_level, current_zoom_level)
+	current_zoom_level = 1.0
+	camera_2d.zoom = Vector2.ONE
 	camera_2d.offset = Vector2.ZERO
 	update_parallax_limits()
 
-func take_damage(amount: int):
-	player_health = max(player_health - amount, 0)
-	print("Player took damage! Health: ", player_health)
+
+func take_damage(amount: int, isShake: bool):
+	if (isShake):
+		player_health = max(player_health - amount, 0)
+		print("Player took damage! Health: ", player_health)
+		apply_shake()
+		isShake = false
+	else:
+		player_health = max(player_health - amount, 0)
+		print("Player took damage! Health: ", player_health)
+	$PlayerHurt.play()
+	
+	$AnimatedSprite2D.play("hurt")
+	await $AnimatedSprite2D.animation_finished
+	$AnimatedSprite2D.play("default")
 
 func interact_with_lever():
 	var closest_lever = get_closest_lever()
@@ -242,7 +305,7 @@ func _on_possess_time_timeout():
 func _on_possess_half_time_timeout():
 	print("almost")
 	is_zooming_and_shaking = true
-	take_damage(1)
+	take_damage(1, false)
 
 func update_parallax_limits():
 	if parallax_bg:
@@ -269,3 +332,11 @@ func apply_fan_effect():
 		velocity.x -= slip_strength
 	else:
 		velocity.x += slip_strength
+
+func apply_shake():
+	print("Applying shake")
+	print("Shake Strength: ", shake_strengh)
+	shake_strengh = randomStrength
+
+func randomOffset() -> Vector2:
+	return Vector2(rng.randf_range(-shake_strengh, shake_strengh), rng.randf_range(-shake_strengh, shake_strengh))
