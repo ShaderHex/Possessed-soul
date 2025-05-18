@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 GlobalWorldEnvironment="*res://scene/world_environment.tscn"
+Statistic="*res://Scripts/statistic.gd"
 
 [display]
 

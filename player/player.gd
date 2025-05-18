@@ -10,7 +10,7 @@ extends CharacterBody2D
 @export var randomStrength: float = 5.0
 @export var shakeFade: float = 5.0
 
-var player_health := 10
+var player_health := 9
 var is_possessed = false
 var enemy = null
 var in_range_enemies = []
@@ -26,6 +26,11 @@ var slip_strength := 50
 var rng = RandomNumberGenerator.new()
 var shake_strengh: float = 0.0
 var is_possessing_animation_running = false
+var unpossess_x: int = 64
+var unpossess_y: int = -50
+var isStuck: bool = false
+var body_name: String
+var possessable_enemies = []
 
 const SPEED = 200.0
 const JUMP_VELOCITY = -400.0
@@ -34,7 +39,6 @@ const MIN_ZOOM = 0.9
 
 @onready var collision_shape_2d = $CollisionShape2D
 @onready var camera_2d = $Camera2D
-@onready var health_ui = $"../CanvasLayer/HealthUI"
 @onready var player_sprite = $AnimatedSprite2D
 @onready var possess_half_time = $PossessHalfTime
 @onready var parallax_bg = $"../ParallaxBackground"
@@ -42,7 +46,6 @@ const MIN_ZOOM = 0.9
 
 func _ready():
 	player_sprite.play("default")
-	health_ui.text = str(player_health)
 	$player_area.area_entered.connect(_on_player_area_entered)
 	$player_area.area_exited.connect(_on_player_area_exited)
 	add_to_group("player")
@@ -54,13 +57,16 @@ func _ready():
 
 
 func _process(delta):
-	health_ui.text = str(player_health)
-
 	var target_position: Vector2
-	if is_possessed and enemy:
+	
+	if isStuck:
+		print("Player might be stuck with ", body_name)
+	
+	if is_possessed and enemy != null:
 		target_position = enemy.global_position
 	else:
 		target_position = global_position
+
 
 	target_position.y += camera_y_offset
 
@@ -68,7 +74,7 @@ func _process(delta):
 
 	camera_2d.global_position = camera_2d.global_position.lerp(target_position, delta * 5)
 	
-	if is_possessed and enemy:
+	if is_possessed and enemy != null:
 		$player_area.global_position = enemy.global_position
 	else:
 		$player_area.global_position = global_position
@@ -205,12 +211,19 @@ func _on_player_area_exited(area: Area2D):
 			in_range_enemies.erase(area.get_parent())
 
 func handle_possession_input():
-	if not is_possessed and in_range_enemies.size() > 0:
-		enemy = get_closest_enemy()
-		if enemy:
-			possess_enemy()
-	elif is_possessed:
+	if not is_possessed:
+		# only keep enemies that can actually be possessed
+		var valid = in_range_enemies.filter(func(e):
+			return e.is_possessable
+		)
+		if valid.size() > 0:
+			# pick closest among the valid ones
+			enemy = get_closest_enemy_from_list(valid)
+			if enemy:
+				possess_enemy()
+	else:
 		unpossess_enemy()
+
 
 
 func get_closest_enemy():
@@ -252,13 +265,66 @@ func unpossess_enemy():
 	is_possessed = false
 	player_sprite.play("default")
 	show()
-	collision_shape_2d.disabled = false
 	
 	if enemy != null:
-		global_position = enemy.global_position + Vector2(64, -50)
+		var enemy_sprite = enemy.get_node("Sprite2D")
+		var direction = -1 if enemy_sprite.flip_h else 1  # Get enemy's facing direction
+		var target_position = enemy.global_position + Vector2(unpossess_x * direction, unpossess_y)
+		
+		# Temporary debug visualization
+		Engine.time_scale = 0.5  # Slow down game temporarily
+		await get_tree().create_timer(0.3).timeout
+		Engine.time_scale = 1.0
+		
+		# Pre-collision check with raycast
+		var space_state = get_world_2d().direct_space_state
+		var query = PhysicsRayQueryParameters2D.create(
+			enemy.global_position,
+			target_position,
+			1 << 0,  # Collision layer for walls (adjust based on your project)
+			[self, enemy]  # Exclude player and enemy from raycast
+		)
+		var ray_result = space_state.intersect_ray(query)
+		
+		# Adjust position based on raycast result
+		if ray_result:
+			print("Wall detected at: ", ray_result.position)
+			target_position = ray_result.position - Vector2(direction * 2, 0)
+		
+		# Position player with collision disabled
+		collision_shape_2d.disabled = true
+		global_position = target_position
+		collision_shape_2d.disabled = false
+		
+		# Resolve collisions
+		var max_attempts = 3
+		for i in range(max_attempts):
+			var collision = move_and_collide(Vector2.ZERO, true, 0.001)
+			if collision:
+				print("Collision detected with: ", collision.get_collider().name)
+				var push_vector = collision.get_normal() * 16
+				global_position += push_vector
+				# Visual feedback
+				modulate = Color.RED
+				await get_tree().create_timer(0.1).timeout
+				modulate = Color.WHITE
+			else:
+				break
+		
+		# Final safety check
+		var final_collision = move_and_collide(Vector2.ZERO, true, 0.001)
+		if final_collision:
+			print("Emergency vertical adjustment")
+			global_position.y -= 32
+			modulate = Color.BLUE
+			await get_tree().create_timer(0.1).timeout
+			modulate = Color.WHITE
+		
+		# Clean up enemy reference
 		enemy.on_unpossess()
 		enemy = null
 
+	# Reset camera and timers
 	$PossessTime.stop()
 	$PossessHalfTime.stop()
 	is_zooming_and_shaking = false
@@ -267,8 +333,7 @@ func unpossess_enemy():
 	camera_2d.zoom = Vector2.ONE
 	camera_2d.offset = Vector2.ZERO
 	update_parallax_limits()
-
-
+	
 func take_damage(amount: int, isShake: bool):
 	if (isShake):
 		player_health = max(player_health - amount, 0)
@@ -322,16 +387,25 @@ func move_light_to_enemy():
 		light.global_position = enemy.global_position
 
 func apply_fan_effect():
-	var camera = $Camera2D
-	if camera:
-		camera.offset = Vector2(randf_range(-5, 5), randf_range(-5, 5))
-		await get_tree().create_timer(0.05).timeout
-		camera.offset = Vector2.ZERO
-
-	if global_position.x < $"../Vent".global_position.x:
-		velocity.x -= slip_strength
+	var vents = get_tree().get_nodes_in_group("vents")
+	
+	var closest_vent : Node2D = null
+	var closest_distance = INF
+	
+	for vent in vents:
+		if is_instance_valid(vent) && vent.has_method("global_position"):
+			var distance = global_position.distance_to(vent.global_position)
+			if distance < closest_distance:
+				closest_vent = vent
+				closest_distance = distance
+	
+	if closest_vent:
+		if global_position.x < closest_vent.global_position.x:
+			velocity.x -= slip_strength
+		else:
+			velocity.x += slip_strength
 	else:
-		velocity.x += slip_strength
+		printerr("No valid vents found in group!")
 
 func apply_shake():
 	print("Applying shake")
@@ -340,3 +414,17 @@ func apply_shake():
 
 func randomOffset() -> Vector2:
 	return Vector2(rng.randf_range(-shake_strengh, shake_strengh), rng.randf_range(-shake_strengh, shake_strengh))
+
+
+func _on_is_stuck_body_entered(body):
+	pass
+
+func get_closest_enemy_from_list(list_of_enemies: Array) -> CharacterBody2D:
+	var closest : CharacterBody2D = null
+	var closest_dist = INF
+	for e in list_of_enemies:
+		var dist = global_position.distance_to(e.global_position)
+		if dist < closest_dist:
+			closest = e
+			closest_dist = dist
+	return closest

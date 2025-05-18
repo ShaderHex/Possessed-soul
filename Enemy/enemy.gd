@@ -3,6 +3,7 @@ extends CharacterBody2D
 var is_possessed = false
 var player = null
 var original_modulate := Color(1, 1, 1)
+var is_possessable: bool = false
 
 @onready var sprite_2d = $Sprite2D
 @onready var flash_timer = $FlashTimer
@@ -65,6 +66,7 @@ func _on_deadzone_body_entered(body):
 
 func on_possess():
 	is_possessed = true
+	Statistic.possession_count += 1
 	$Deadzone.set_deferred("monitoring", false)
 
 func on_unpossess():
@@ -88,7 +90,6 @@ func possessed_move(input_vector: Vector2, delta: float):
 	velocity.x = input_vector.x * SPEED
 	sprite_2d.flip_h = input_vector.x < 0
 
-	# You can choose which animation to play based on input
 	if input_vector.x != 0:
 		sprite_2d.play("chase")
 	else:
@@ -100,3 +101,13 @@ func possessed_move(input_vector: Vector2, delta: float):
 		velocity.y = 0
 
 	move_and_slide()
+
+
+func _on_is_possesable_body_entered(body):
+	if body.name == "player":
+		is_possessable = true
+
+
+func _on_is_possesable_body_exited(body):
+	if body.name == "player":
+		is_possessable = false

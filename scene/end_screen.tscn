@@ -1,0 +1,62 @@
+[gd_scene load_steps=3 format=3 uid="uid://fleckyt1vyst"]
+
+[ext_resource type="FontFile" uid="uid://8kgm540nvivb" path="res://PressStart2P-Regular.ttf" id="1_l5jwr"]
+[ext_resource type="Script" uid="uid://ci8pmgdiq2v2x" path="res://Scripts/end_screen.gd" id="1_yhdaf"]
+
+[node name="EndScreen" type="Node2D"]
+script = ExtResource("1_yhdaf")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="YouHaveCompletedTheGame" type="RichTextLabel" parent="CanvasLayer"]
+offset_left = 2.0
+offset_top = 41.0
+offset_right = 480.0
+offset_bottom = 93.0
+theme_override_fonts/normal_font = ExtResource("1_l5jwr")
+text = "You have completed the game!"
+horizontal_alignment = 1
+
+[node name="TotalTime" type="RichTextLabel" parent="CanvasLayer"]
+offset_left = 17.0
+offset_top = 82.0
+offset_right = 240.0
+offset_bottom = 110.0
+theme_override_fonts/normal_font = ExtResource("1_l5jwr")
+text = "Total Time: "
+horizontal_alignment = 1
+
+[node name="TotalTimeNum" type="RichTextLabel" parent="CanvasLayer"]
+offset_left = 255.0
+offset_top = 82.0
+offset_right = 478.0
+offset_bottom = 110.0
+theme_override_fonts/normal_font = ExtResource("1_l5jwr")
+text = "0:00"
+horizontal_alignment = 1
+
+[node name="PossessionUsed" type="RichTextLabel" parent="CanvasLayer"]
+offset_left = 17.0
+offset_top = 125.0
+offset_right = 290.0
+offset_bottom = 153.0
+theme_override_fonts/normal_font = ExtResource("1_l5jwr")
+text = "Possessions Used:"
+horizontal_alignment = 1
+
+[node name="PossessionUsedNum" type="RichTextLabel" parent="CanvasLayer"]
+offset_left = 255.0
+offset_top = 124.0
+offset_right = 478.0
+offset_bottom = 152.0
+theme_override_fonts/normal_font = ExtResource("1_l5jwr")
+text = "0:00"
+horizontal_alignment = 1

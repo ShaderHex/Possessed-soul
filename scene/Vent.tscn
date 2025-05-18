@@ -124,7 +124,7 @@ size = Vector2(67, 61.5)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_p7cob"]
 size = Vector2(61, 62)
 
-[node name="vent" type="AnimatedSprite2D"]
+[node name="vent" type="AnimatedSprite2D" groups=["vents"]]
 sprite_frames = SubResource("SpriteFrames_a8u4w")
 script = ExtResource("2_satsv")
 

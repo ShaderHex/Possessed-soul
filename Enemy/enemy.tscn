@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://bqhq1m3vky18d"]
+[gd_scene load_steps=15 format=3 uid="uid://bqhq1m3vky18d"]
 
 [ext_resource type="Script" uid="uid://clhphkqftgrxp" path="res://Enemy/enemy.gd" id="1_px1sc"]
 [ext_resource type="Texture2D" uid="uid://c8cvd3dsrcoxk" path="res://asset/zombie/Zombie_SpriteSheet.png" id="2_am0pq"]
@@ -59,10 +59,13 @@ radius = 14.0
 size = Vector2(20, 26)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_eqilm"]
-radius = 17.0
+radius = 16.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ncf7h"]
 radius = 125.1
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_am0pq"]
+radius = 44.0114
 
 [node name="Enemy" type="CharacterBody2D" groups=["enemy"]]
 script = ExtResource("1_px1sc")
@@ -103,6 +106,11 @@ shape = SubResource("CircleShape2D_ncf7h")
 [node name="Possessing" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("3_am0pq")
 
+[node name="isPossesable" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="isPossesable"]
+shape = SubResource("CircleShape2D_am0pq")
+
 [connection signal="area_entered" from="Area2D" to="." method="_on_area_2d_area_entered"]
 [connection signal="area_exited" from="Area2D" to="." method="_on_area_2d_area_exited"]
 [connection signal="timeout" from="FlashTimer" to="." method="_on_flash_timer_timeout"]
@@ -111,3 +119,5 @@ stream = ExtResource("3_am0pq")
 [connection signal="timeout" from="DamageCooldownTimer" to="." method="_on_damage_cooldown_timer_timeout"]
 [connection signal="area_entered" from="ChasePlayer" to="." method="_on_ChasePlayer_body_entered"]
 [connection signal="area_exited" from="ChasePlayer" to="." method="_on_ChasePlayer_body_exited"]
+[connection signal="body_entered" from="isPossesable" to="." method="_on_is_possesable_body_entered"]
+[connection signal="body_exited" from="isPossesable" to="." method="_on_is_possesable_body_exited"]

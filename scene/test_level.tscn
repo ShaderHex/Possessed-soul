@@ -1,23 +1,24 @@
-[gd_scene load_steps=18 format=3 uid="uid://bq7l37wg03sq4"]
+[gd_scene load_steps=19 format=3 uid="uid://bq7l37wg03sq4"]
 
-[ext_resource type="Script" uid="uid://5skufq2s4ngc" path="res://Scripts/level_1.gd" id="1_7lb8k"]
-[ext_resource type="PackedScene" uid="uid://cqnmh8j8egrjg" path="res://player/player.tscn" id="1_446fn"]
-[ext_resource type="Texture2D" uid="uid://iry6keggqenv" path="res://asset/place/platformer.png" id="2_fwul8"]
-[ext_resource type="PackedScene" uid="uid://bqhq1m3vky18d" path="res://Enemy/enemy.tscn" id="3_fwul8"]
-[ext_resource type="PackedScene" uid="uid://dsimak85oj4di" path="res://scene/door.tscn" id="4_0a4uc"]
-[ext_resource type="FontFile" uid="uid://8kgm540nvivb" path="res://PressStart2P-Regular.ttf" id="5_nk78g"]
-[ext_resource type="PackedScene" uid="uid://c0jbatolpgts8" path="res://scene/lever.tscn" id="6_a215g"]
-[ext_resource type="PackedScene" uid="uid://c8xr5q533xfkm" path="res://scene/lever_door.tscn" id="7_ebr37"]
-[ext_resource type="Texture2D" uid="uid://bdhbbvqm2rmum" path="res://asset/door/lever_door_opened.png" id="8_ldwqa"]
-[ext_resource type="Texture2D" uid="uid://b6j6deqim1vey" path="res://asset/door/lever_door_closed.png" id="9_kjjd3"]
-[ext_resource type="Texture2D" uid="uid://ch1kcpp1xna28" path="res://asset/Background/Plan 4.png" id="10_kjjd3"]
-[ext_resource type="Texture2D" uid="uid://dvfxcw7wd83gb" path="res://asset/Background/Plan 2.png" id="11_e6f45"]
-[ext_resource type="AudioStream" uid="uid://xalmqfoipajg" path="res://asset/audio/background/background-atmosphere.wav" id="12_3qsor"]
-[ext_resource type="AudioStream" uid="uid://dbikjjkblrnux" path="res://asset/audio/background/water-dripping.mp3" id="14_6i17f"]
-[ext_resource type="PackedScene" uid="uid://b5kehew2yh3tm" path="res://scene/Vent.tscn" id="15_wrpia"]
+[ext_resource type="Script" uid="uid://5skufq2s4ngc" path="res://Scripts/test_level.gd" id="1_xyvph"]
+[ext_resource type="PackedScene" uid="uid://bqhq1m3vky18d" path="res://Enemy/enemy.tscn" id="2_pmus8"]
+[ext_resource type="PackedScene" uid="uid://dsimak85oj4di" path="res://scene/door.tscn" id="3_jefo1"]
+[ext_resource type="PackedScene" uid="uid://c0jbatolpgts8" path="res://scene/lever.tscn" id="4_5sg87"]
+[ext_resource type="PackedScene" uid="uid://c8xr5q533xfkm" path="res://scene/lever_door.tscn" id="5_vltiq"]
+[ext_resource type="Texture2D" uid="uid://bdhbbvqm2rmum" path="res://asset/door/lever_door_opened.png" id="6_h84sr"]
+[ext_resource type="Texture2D" uid="uid://b6j6deqim1vey" path="res://asset/door/lever_door_closed.png" id="7_6gcto"]
+[ext_resource type="PackedScene" uid="uid://cqnmh8j8egrjg" path="res://player/player.tscn" id="8_ht11e"]
+[ext_resource type="Texture2D" uid="uid://iry6keggqenv" path="res://asset/place/platformer.png" id="9_grsv4"]
+[ext_resource type="Texture2D" uid="uid://cx0wmc7sgooss" path="res://asset/heart/health.png" id="10_xyvph"]
+[ext_resource type="Texture2D" uid="uid://ch1kcpp1xna28" path="res://asset/Background/Plan 4.png" id="11_bmdnq"]
+[ext_resource type="Texture2D" uid="uid://dvfxcw7wd83gb" path="res://asset/Background/Plan 2.png" id="12_v6ueh"]
+[ext_resource type="AudioStream" uid="uid://xalmqfoipajg" path="res://asset/audio/background/background-atmosphere.wav" id="13_4ukje"]
+[ext_resource type="AudioStream" uid="uid://dbikjjkblrnux" path="res://asset/audio/background/water-dripping.mp3" id="14_4iaye"]
+[ext_resource type="PackedScene" uid="uid://b5kehew2yh3tm" path="res://scene/Vent.tscn" id="15_xroi7"]
+[ext_resource type="PackedScene" uid="uid://dcgnufknkrvul" path="res://scene/spikes.tscn" id="16_xyvph"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_wrpia"]
-texture = ExtResource("2_fwul8")
+texture = ExtResource("9_grsv4")
 texture_region_size = Vector2i(8, 8)
 0:0/0 = 0
 0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-3.97857, -3.97857, 3.99104, -3.94115, 4.01598, 3.94115, -4.00351, 3.99104)
@@ -134,29 +135,28 @@ tile_size = Vector2i(8, 8)
 physics_layer_0/collision_layer = 1
 sources/0 = SubResource("TileSetAtlasSource_wrpia")
 
-[node name="level_1" type="Node2D"]
-script = ExtResource("1_7lb8k")
+[node name="test_level" type="Node2D"]
+script = ExtResource("1_xyvph")
 
-[node name="Enemy" parent="." instance=ExtResource("3_fwul8")]
+[node name="Enemy" parent="." instance=ExtResource("2_pmus8")]
 position = Vector2(622, 192)
 
-[node name="door" parent="." instance=ExtResource("4_0a4uc")]
+[node name="door" parent="." instance=ExtResource("3_jefo1")]
 position = Vector2(487, 176)
 
-[node name="Enemy2" parent="." instance=ExtResource("3_fwul8")]
+[node name="Enemy2" parent="." instance=ExtResource("2_pmus8")]
 position = Vector2(476, 191)
-isAttackable = false
 
-[node name="lever" parent="." instance=ExtResource("6_a215g")]
+[node name="lever" parent="." instance=ExtResource("4_5sg87")]
 position = Vector2(741, 213)
 connected_doors = Array[NodePath]([NodePath("../lever_door")])
 
-[node name="lever_door" parent="." instance=ExtResource("7_ebr37")]
+[node name="lever_door" parent="." instance=ExtResource("5_vltiq")]
 position = Vector2(809, 193)
-on_texture = ExtResource("8_ldwqa")
-off_texture = ExtResource("9_kjjd3")
+on_texture = ExtResource("6_h84sr")
+off_texture = ExtResource("7_6gcto")
 
-[node name="player" parent="." instance=ExtResource("1_446fn")]
+[node name="player" parent="." instance=ExtResource("8_ht11e")]
 position = Vector2(194, 195)
 
 [node name="TileMap" type="TileMap" parent="."]
@@ -166,21 +166,25 @@ layer_0/tile_data = PackedInt32Array(1835008, 65536, 0, 1835009, 131072, 0, 1835
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="Health" type="RichTextLabel" parent="CanvasLayer"]
-offset_left = 4.0
-offset_top = 45.0
-offset_right = 135.0
-offset_bottom = 75.0
-theme_override_fonts/normal_font = ExtResource("5_nk78g")
-text = "Health:"
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer"]
+offset_top = 9.0
+offset_right = 89.0
+offset_bottom = 36.0
 
-[node name="HealthUI" type="RichTextLabel" parent="CanvasLayer"]
-offset_left = 112.0
-offset_top = 45.0
-offset_right = 175.0
-offset_bottom = 75.0
-theme_override_fonts/normal_font = ExtResource("5_nk78g")
-text = "100"
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("10_xyvph")
+expand_mode = 2
+
+[node name="TextureRect2" type="TextureRect" parent="CanvasLayer/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("10_xyvph")
+expand_mode = 2
+
+[node name="TextureRect3" type="TextureRect" parent="CanvasLayer/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("10_xyvph")
+expand_mode = 2
 
 [node name="Vignette" type="TextureRect" parent="CanvasLayer"]
 anchors_preset = 15
@@ -197,7 +201,7 @@ motion_mirroring = Vector2(575.565, 0)
 
 [node name="Sprite2D" type="Sprite2D" parent="CanvasLayer/Background/Layer"]
 position = Vector2(240, 135)
-texture = ExtResource("10_kjjd3")
+texture = ExtResource("11_bmdnq")
 
 [node name="Layer2" type="ParallaxLayer" parent="CanvasLayer/Background"]
 motion_scale = Vector2(0.9, 0.9)
@@ -206,13 +210,13 @@ motion_mirroring = Vector2(460, 0)
 [node name="Sprite2D" type="Sprite2D" parent="CanvasLayer/Background/Layer2"]
 position = Vector2(240, 135)
 scale = Vector2(0.8, 0.8)
-texture = ExtResource("11_e6f45")
+texture = ExtResource("12_v6ueh")
 
 [node name="BackgroundSound" type="AudioStreamPlayer2D" parent="."]
-stream = ExtResource("12_3qsor")
+stream = ExtResource("13_4ukje")
 
 [node name="WaterDripping" type="AudioStreamPlayer2D" parent="."]
-stream = ExtResource("14_6i17f")
+stream = ExtResource("14_4iaye")
 volume_db = -8.432
 pitch_scale = 1.25
 
@@ -220,17 +224,20 @@ pitch_scale = 1.25
 position = Vector2(240, 135)
 color = Color(0, 0.174479, 0.174479, 1)
 
-[node name="Vent" parent="." instance=ExtResource("15_wrpia")]
+[node name="Vent" parent="." instance=ExtResource("15_xroi7")]
 position = Vector2(916, 193)
 
-[node name="vent" parent="." instance=ExtResource("15_wrpia")]
+[node name="vent" parent="." instance=ExtResource("15_xroi7")]
 position = Vector2(341, 255)
 rotation = 1.57079
 hasPhysics = true
 
-[node name="lever2" parent="." instance=ExtResource("6_a215g")]
+[node name="lever2" parent="." instance=ExtResource("4_5sg87")]
 position = Vector2(267, 210)
 connected_doors = Array[NodePath]([NodePath("../vent")])
+
+[node name="Spikes" parent="." instance=ExtResource("16_xyvph")]
+position = Vector2(84, 216)
 
 [connection signal="finished" from="BackgroundSound" to="." method="_on_audio_stream_player_2d_finished"]
 [connection signal="finished" from="WaterDripping" to="." method="_on_water_dripping_finished"]
