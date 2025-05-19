@@ -11,3 +11,10 @@ func _ready():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	pass
+
+
+func _on_main_menu_pressed():
+	get_tree().change_scene_to_file("res://scene/UI.tscn")
+
+func _on_exit_pressed():
+	get_tree().quit()

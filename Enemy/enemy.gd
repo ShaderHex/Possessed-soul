@@ -9,6 +9,7 @@ var is_possessable: bool = false
 @onready var flash_timer = $FlashTimer
 @onready var possessing_sound = $Possessing
 @onready var player_node = $"../player"
+@onready var footstep_sound = $footstep
 
 @export var isAttackable = true
 
@@ -86,14 +87,17 @@ func move_light_to_player():
 func possessed_move(input_vector: Vector2, delta: float):
 	if not is_possessed:
 		return
-	
+
 	velocity.x = input_vector.x * SPEED
 	sprite_2d.flip_h = input_vector.x < 0
 
 	if input_vector.x != 0:
 		sprite_2d.play("chase")
+		if not footstep_sound.playing:
+			footstep_sound.play()
 	else:
 		sprite_2d.play("default")
+		footstep_sound.stop()
 
 	if not is_on_floor():
 		velocity.y += GRAVITY * delta
@@ -101,7 +105,6 @@ func possessed_move(input_vector: Vector2, delta: float):
 		velocity.y = 0
 
 	move_and_slide()
-
 
 func _on_is_possesable_body_entered(body):
 	if body.name == "player":

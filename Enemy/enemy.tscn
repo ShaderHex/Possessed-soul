@@ -1,8 +1,9 @@
-[gd_scene load_steps=15 format=3 uid="uid://bqhq1m3vky18d"]
+[gd_scene load_steps=16 format=3 uid="uid://bqhq1m3vky18d"]
 
 [ext_resource type="Script" uid="uid://clhphkqftgrxp" path="res://Enemy/enemy.gd" id="1_px1sc"]
 [ext_resource type="Texture2D" uid="uid://c8cvd3dsrcoxk" path="res://asset/zombie/Zombie_SpriteSheet.png" id="2_am0pq"]
 [ext_resource type="AudioStream" uid="uid://cf34ygl6wtuf0" path="res://asset/audio/enemy/possessing.mp3" id="3_am0pq"]
+[ext_resource type="AudioStream" uid="uid://r63csd8xay3l" path="res://asset/audio/player/footstep.wav" id="4_eqilm"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ncf7h"]
 atlas = ExtResource("2_am0pq")
@@ -110,6 +111,9 @@ stream = ExtResource("3_am0pq")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="isPossesable"]
 shape = SubResource("CircleShape2D_am0pq")
+
+[node name="footstep" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("4_eqilm")
 
 [connection signal="area_entered" from="Area2D" to="." method="_on_area_2d_area_entered"]
 [connection signal="area_exited" from="Area2D" to="." method="_on_area_2d_area_exited"]

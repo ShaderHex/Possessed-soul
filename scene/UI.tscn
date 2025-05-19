@@ -1,0 +1,361 @@
+[gd_scene load_steps=20 format=3 uid="uid://b4go5dtl3crak"]
+
+[ext_resource type="Texture2D" uid="uid://bkgwhpvn3xsit" path="res://asset/UI/GUI (1) .png" id="1_c73ev"]
+[ext_resource type="StyleBox" uid="uid://dkuqv74bd2y7" path="res://asset/Theme & Style Box/hover_button'.tres" id="1_cbomc"]
+[ext_resource type="StyleBox" uid="uid://clkjx503wheum" path="res://asset/Theme & Style Box/normal_button.tres" id="1_qe48f"]
+[ext_resource type="Script" uid="uid://cqbpduhwa48il" path="res://scene/mainmenu.gd" id="3_bb7dc"]
+[ext_resource type="Shader" uid="uid://bfuih5vwhdo3c" path="res://scene/scroll.gdshader" id="4_0squ3"]
+[ext_resource type="Texture2D" uid="uid://ch1kcpp1xna28" path="res://asset/Background/Plan 4.png" id="4_lwasl"]
+[ext_resource type="Texture2D" uid="uid://cktf0e4xlvcvq" path="res://asset/UI/CreditUI.png" id="4_wbuqp"]
+[ext_resource type="FontFile" uid="uid://8kgm540nvivb" path="res://PressStart2P-Regular.ttf" id="5_7wp6k"]
+[ext_resource type="Texture2D" uid="uid://b8qasm66f8b1h" path="res://asset/Background/Plan 3.png" id="6_lj1a1"]
+[ext_resource type="AudioStream" uid="uid://bb3mln3pemk8l" path="res://asset/audio/background/mainmenu.wav" id="10_rxvkj"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cbomc"]
+
+[sub_resource type="Theme" id="Theme_c73ev"]
+Button/font_sizes/font_size = 16
+Button/styles/focus = SubResource("StyleBoxEmpty_cbomc")
+Button/styles/hover = ExtResource("1_cbomc")
+Button/styles/normal = ExtResource("1_qe48f")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_lj1a1"]
+shader = ExtResource("4_0squ3")
+
+[sub_resource type="Animation" id="Animation_bb7dc"]
+resource_name = "hide_credit"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Credit:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(2, 2),
+"update": 0,
+"values": [Vector2(66, 30), Vector2(66, -222)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Credit:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+
+[sub_resource type="Animation" id="Animation_lwasl"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Credit:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(66, 30)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Credit:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Menu:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(166, 69.5)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Menu:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_0squ3"]
+resource_name = "show_credit"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Credit:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(0.5, 0.5),
+"update": 0,
+"values": [Vector2(66, -222), Vector2(66, 30)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Credit:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, true]
+}
+
+[sub_resource type="Animation" id="Animation_lj1a1"]
+resource_name = "hide_menu"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Menu:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(0.5, 0.5),
+"update": 0,
+"values": [Vector2(166, 69.5), Vector2(166, 319)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Menu:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+
+[sub_resource type="Animation" id="Animation_rxvkj"]
+resource_name = "show_menu"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Menu:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(0.5, 0.5),
+"update": 0,
+"values": [Vector2(166, 319), Vector2(166, 69.5)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Menu:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, true]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_lwasl"]
+_data = {
+&"RESET": SubResource("Animation_lwasl"),
+&"hide_credit": SubResource("Animation_bb7dc"),
+&"hide_menu": SubResource("Animation_lj1a1"),
+&"show_credit": SubResource("Animation_0squ3"),
+&"show_menu": SubResource("Animation_rxvkj")
+}
+
+[node name="MainMenu" type="Control" node_paths=PackedStringArray("menu", "credit", "animation_player")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+theme = SubResource("Theme_c73ev")
+script = ExtResource("3_bb7dc")
+menu = NodePath("Menu")
+credit = NodePath("Credit")
+animation_player = NodePath("AnimationPlayer")
+
+[node name="BG1" type="TextureRect" parent="."]
+texture_repeat = 2
+material = SubResource("ShaderMaterial_lj1a1")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -48.0
+offset_top = -27.0
+offset_right = 48.0
+offset_bottom = 27.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_lwasl")
+
+[node name="BG2" type="TextureRect" parent="."]
+texture_repeat = 2
+material = SubResource("ShaderMaterial_lj1a1")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -48.0
+offset_top = -27.0
+offset_right = 48.0
+offset_bottom = 27.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("6_lj1a1")
+
+[node name="Menu" type="NinePatchRect" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -74.0
+offset_top = -65.5
+offset_right = 74.0
+offset_bottom = 65.5
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_c73ev")
+region_rect = Rect2(0, 0, 44, 44)
+patch_margin_left = 5
+patch_margin_top = 5
+patch_margin_right = 5
+patch_margin_bottom = 5
+axis_stretch_horizontal = 2
+axis_stretch_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Menu"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Play" type="Button" parent="Menu/VBoxContainer"]
+layout_mode = 2
+text = "Play"
+
+[node name="Credit" type="Button" parent="Menu/VBoxContainer"]
+layout_mode = 2
+text = "Credit"
+
+[node name="Exit" type="Button" parent="Menu/VBoxContainer"]
+layout_mode = 2
+text = "Exit"
+
+[node name="Credit" type="NinePatchRect" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -174.0
+offset_top = -105.0
+offset_right = 174.0
+offset_bottom = 105.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_wbuqp")
+patch_margin_left = 6
+patch_margin_top = 6
+patch_margin_right = 6
+patch_margin_bottom = 5
+axis_stretch_horizontal = 2
+axis_stretch_vertical = 2
+
+[node name="Title" type="RichTextLabel" parent="Credit"]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 12.0
+offset_right = 336.0
+offset_bottom = 33.0
+text = "Credit"
+horizontal_alignment = 1
+
+[node name="Credits" type="RichTextLabel" parent="Credit"]
+layout_mode = 2
+offset_left = 7.0
+offset_top = 62.0
+offset_right = 348.0
+offset_bottom = 210.0
+theme_override_constants/line_separation = 3
+theme_override_fonts/normal_font = ExtResource("5_7wp6k")
+theme_override_font_sizes/normal_font_size = 9
+text = "Game by ShaderHex
+
+Programming, design by ShaderHex
+
+Visuals by Bahran, craftpix, kenney, Omniclause, gft123456er, hotpanty, 
+
+Sound by Homemade_SFX, Universfield,  Patrick, FreeSoundsxx"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_lwasl")
+}
+autoplay = "show_menu"
+
+[node name="Title" type="RichTextLabel" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 22.0
+offset_bottom = 49.0
+grow_horizontal = 2
+text = "Possessed Soul"
+horizontal_alignment = 1
+
+[node name="MainMenu" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("10_rxvkj")
+autoplay = true
+
+[connection signal="pressed" from="Menu/VBoxContainer/Play" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="Menu/VBoxContainer/Credit" to="." method="_on_credit_pressed"]
+[connection signal="pressed" from="Menu/VBoxContainer/Exit" to="." method="_on_exit_pressed"]
+[connection signal="finished" from="MainMenu" to="." method="_on_main_menu_finished"]

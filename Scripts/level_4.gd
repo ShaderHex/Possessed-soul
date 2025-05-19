@@ -4,6 +4,7 @@ extends Node2D
 @onready var water_dripping = $WaterDripping
 @onready var player = $player
 @onready var fade_rect = $CanvasLayer/FadeRect
+@export var scene_path: String
 
 
 func _ready():
@@ -43,3 +44,7 @@ func fade_out(duration := 1.0):
 	tween.tween_property(fade_rect, "modulate:a", 0.0, duration)
 	await tween.finished
 	fade_rect.visible = false
+
+
+func _on_restart_pressed():
+	get_tree().change_scene_to_file(scene_path)

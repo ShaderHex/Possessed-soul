@@ -16,4 +16,4 @@ func _on_body_entered(body):
 	if body.is_in_group("player"):
 		if body.has_method("take_damage"):
 			body.take_damage(damage, true)
-	queue_free() # Delete on hit
+	queue_free()

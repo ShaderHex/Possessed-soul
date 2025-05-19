@@ -1,16 +1,27 @@
-[gd_scene load_steps=14 format=3 uid="uid://dn6js3giy0h08"]
+[gd_scene load_steps=20 format=3 uid="uid://dn6js3giy0h08"]
 
 [ext_resource type="Script" uid="uid://b8l5g8pxcr2fe" path="res://Scripts/level_5.gd" id="1_h0w3k"]
 [ext_resource type="Texture2D" uid="uid://cx0wmc7sgooss" path="res://asset/heart/health.png" id="2_4opn3"]
+[ext_resource type="PackedScene" uid="uid://dbjcmwfux328y" path="res://scene/world_environment.tscn" id="2_315ab"]
 [ext_resource type="Texture2D" uid="uid://ch1kcpp1xna28" path="res://asset/Background/Plan 4.png" id="3_6joic"]
 [ext_resource type="Texture2D" uid="uid://dvfxcw7wd83gb" path="res://asset/Background/Plan 2.png" id="4_fc7km"]
 [ext_resource type="Texture2D" uid="uid://iry6keggqenv" path="res://asset/place/platformer.png" id="5_qjrvu"]
 [ext_resource type="AudioStream" uid="uid://xalmqfoipajg" path="res://asset/audio/background/background-atmosphere.wav" id="6_ehxtd"]
+[ext_resource type="StyleBox" uid="uid://dkuqv74bd2y7" path="res://asset/Theme & Style Box/hover_button'.tres" id="6_h2wq0"]
 [ext_resource type="AudioStream" uid="uid://dbikjjkblrnux" path="res://asset/audio/background/water-dripping.mp3" id="7_315ab"]
+[ext_resource type="StyleBox" uid="uid://clkjx503wheum" path="res://asset/Theme & Style Box/normal_button.tres" id="7_kbg43"]
+[ext_resource type="FontFile" uid="uid://8kgm540nvivb" path="res://PressStart2P-Regular.ttf" id="8_d7gkl"]
 [ext_resource type="PackedScene" uid="uid://b5kehew2yh3tm" path="res://scene/Vent.tscn" id="8_fc7km"]
 [ext_resource type="PackedScene" uid="uid://b55e4rm45h3hs" path="res://scene/crystal.tscn" id="9_qjrvu"]
 [ext_resource type="PackedScene" uid="uid://cqnmh8j8egrjg" path="res://player/player.tscn" id="10_qjrvu"]
 [ext_resource type="PackedScene" uid="uid://bqhq1m3vky18d" path="res://Enemy/enemy.tscn" id="11_ehxtd"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_4pdvf"]
+
+[sub_resource type="Theme" id="Theme_mi21m"]
+Button/styles/focus = SubResource("StyleBoxEmpty_4pdvf")
+Button/styles/hover = ExtResource("6_h2wq0")
+Button/styles/normal = ExtResource("7_kbg43")
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ehxtd"]
 texture = ExtResource("5_qjrvu")
@@ -132,6 +143,9 @@ sources/0 = SubResource("TileSetAtlasSource_ehxtd")
 
 [node name="level_5" type="Node2D"]
 script = ExtResource("1_h0w3k")
+scene_path = "res://scene/level_5.tscn"
+
+[node name="WorldEnvironment" parent="." instance=ExtResource("2_315ab")]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -190,6 +204,24 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 1)
 
+[node name="Control" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme = SubResource("Theme_mi21m")
+
+[node name="Restart" type="Button" parent="CanvasLayer/Control"]
+offset_left = 374.0
+offset_top = 7.0
+offset_right = 475.0
+offset_bottom = 35.0
+theme_override_fonts/font = ExtResource("8_d7gkl")
+theme_override_font_sizes/font_size = 6
+text = "Restart level"
+
 [node name="TileMap" type="TileMap" parent="."]
 tile_set = SubResource("TileSet_hqf2v")
 format = 2
@@ -218,3 +250,5 @@ position = Vector2(60, 129)
 
 [node name="Enemy" parent="." instance=ExtResource("11_ehxtd")]
 position = Vector2(422, 125)
+
+[connection signal="pressed" from="CanvasLayer/Control/Restart" to="." method="_on_restart_pressed"]

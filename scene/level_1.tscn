@@ -1,17 +1,28 @@
-[gd_scene load_steps=15 format=3 uid="uid://dvbw7cq2lk7au"]
+[gd_scene load_steps=21 format=3 uid="uid://dvbw7cq2lk7au"]
 
 [ext_resource type="Script" uid="uid://cghw4h4nlhtdu" path="res://Scripts/level_1.gd" id="1_c1764"]
 [ext_resource type="Texture2D" uid="uid://cx0wmc7sgooss" path="res://asset/heart/health.png" id="1_xesoj"]
 [ext_resource type="Texture2D" uid="uid://ch1kcpp1xna28" path="res://asset/Background/Plan 4.png" id="2_53ndp"]
+[ext_resource type="PackedScene" uid="uid://dbjcmwfux328y" path="res://scene/world_environment.tscn" id="2_i3j6g"]
 [ext_resource type="Texture2D" uid="uid://dvfxcw7wd83gb" path="res://asset/Background/Plan 2.png" id="3_70cbr"]
 [ext_resource type="Texture2D" uid="uid://iry6keggqenv" path="res://asset/place/platformer.png" id="4_lsoxn"]
 [ext_resource type="PackedScene" uid="uid://cqnmh8j8egrjg" path="res://player/player.tscn" id="5_53ndp"]
+[ext_resource type="StyleBox" uid="uid://dkuqv74bd2y7" path="res://asset/Theme & Style Box/hover_button'.tres" id="6_hs4ge"]
 [ext_resource type="PackedScene" uid="uid://b5kehew2yh3tm" path="res://scene/Vent.tscn" id="6_lsoxn"]
+[ext_resource type="StyleBox" uid="uid://clkjx503wheum" path="res://asset/Theme & Style Box/normal_button.tres" id="7_hidkv"]
 [ext_resource type="PackedScene" uid="uid://bqhq1m3vky18d" path="res://Enemy/enemy.tscn" id="7_x17xt"]
+[ext_resource type="FontFile" uid="uid://8kgm540nvivb" path="res://PressStart2P-Regular.ttf" id="8_hidkv"]
 [ext_resource type="PackedScene" uid="uid://c0jbatolpgts8" path="res://scene/lever.tscn" id="8_x17xt"]
 [ext_resource type="AudioStream" uid="uid://xalmqfoipajg" path="res://asset/audio/background/background-atmosphere.wav" id="10_1gcq6"]
 [ext_resource type="AudioStream" uid="uid://dbikjjkblrnux" path="res://asset/audio/background/water-dripping.mp3" id="11_a2j0k"]
 [ext_resource type="PackedScene" uid="uid://b55e4rm45h3hs" path="res://scene/crystal.tscn" id="12_a2j0k"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hidkv"]
+
+[sub_resource type="Theme" id="Theme_3m3n6"]
+Button/styles/focus = SubResource("StyleBoxEmpty_hidkv")
+Button/styles/hover = ExtResource("6_hs4ge")
+Button/styles/normal = ExtResource("7_hidkv")
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_a2j0k"]
 texture = ExtResource("4_lsoxn")
@@ -133,6 +144,9 @@ sources/0 = SubResource("TileSetAtlasSource_a2j0k")
 
 [node name="level1" type="Node2D"]
 script = ExtResource("1_c1764")
+scene_path = "res://scene/level_1.tscn"
+
+[node name="WorldEnvironment" parent="." instance=ExtResource("2_i3j6g")]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -191,6 +205,25 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 1)
 
+[node name="Control" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme = SubResource("Theme_3m3n6")
+
+[node name="Restart" type="Button" parent="CanvasLayer/Control"]
+layout_mode = 0
+offset_left = 374.0
+offset_top = 7.0
+offset_right = 475.0
+offset_bottom = 35.0
+theme_override_fonts/font = ExtResource("8_hidkv")
+theme_override_font_sizes/font_size = 6
+text = "Restart level"
+
 [node name="lever" parent="." instance=ExtResource("8_x17xt")]
 position = Vector2(298, 141)
 connected_doors = Array[NodePath]([NodePath("../vent")])
@@ -223,3 +256,5 @@ pitch_scale = 1.25
 position = Vector2(603, 196)
 fade_rect = NodePath("../CanvasLayer/FadeRect")
 scene_path = "res://scene/level_2.tscn"
+
+[connection signal="pressed" from="CanvasLayer/Control/Restart" to="." method="_on_restart_pressed"]

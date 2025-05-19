@@ -1,7 +1,8 @@
-[gd_scene load_steps=32 format=3 uid="uid://dq3c5m8xtrlmc"]
+[gd_scene load_steps=33 format=3 uid="uid://dq3c5m8xtrlmc"]
 
 [ext_resource type="Script" uid="uid://cvrlyaa6eaewh" path="res://Scripts/tutorial_level.gd" id="1_eg424"]
 [ext_resource type="FontFile" uid="uid://8kgm540nvivb" path="res://PressStart2P-Regular.ttf" id="2_eg424"]
+[ext_resource type="PackedScene" uid="uid://dbjcmwfux328y" path="res://scene/world_environment.tscn" id="2_o64pn"]
 [ext_resource type="Texture2D" uid="uid://ch1kcpp1xna28" path="res://asset/Background/Plan 4.png" id="3_hthnk"]
 [ext_resource type="Texture2D" uid="uid://dvfxcw7wd83gb" path="res://asset/Background/Plan 2.png" id="4_hsqdu"]
 [ext_resource type="Texture2D" uid="uid://iry6keggqenv" path="res://asset/place/platformer.png" id="4_verlh"]
@@ -220,6 +221,8 @@ animations = [{
 
 [node name="tutorial_level" type="Node2D"]
 script = ExtResource("1_eg424")
+
+[node name="WorldEnvironment" parent="." instance=ExtResource("2_o64pn")]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 

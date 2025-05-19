@@ -31,6 +31,10 @@ var unpossess_y: int = -50
 var isStuck: bool = false
 var body_name: String
 var possessable_enemies = []
+var coyote_time := 0.2
+var coyote_timer := 0.0
+var jump_buffer_time := 0.15
+var jump_buffer_timer := 0.0
 
 const SPEED = 200.0
 const JUMP_VELOCITY = -400.0
@@ -128,30 +132,32 @@ func handle_possessed_movement(delta):
 	if not enemy.is_on_floor():
 		enemy.velocity.y += GRAVITY * delta
 
-	if Input.is_action_just_pressed("ui_accept") and enemy.is_on_floor():
-		enemy.velocity.y = JUMP_VELOCITY
-
 	var direction = Input.get_axis("left", "right")
+
 	if direction != 0:
-		enemy.velocity.x = direction * SPEED
+		enemy.velocity.x = direction * 100
 	else:
 		enemy.velocity.x = lerp(enemy.velocity.x, 0.0, delta * 10.0)
 	enemy.move_and_slide()
 
-	# === ANIMATION LOGIC ===
 	var sprite = enemy.get_node("Sprite2D")
 
 	if not enemy.is_on_floor():
 		sprite.play("jump")
+		$footstep.stop()
 	elif direction != 0:
 		sprite.play("chase")
+		if not $footstep.playing:
+			$footstep.play()
 	else:
 		sprite.play("default")
+		$footstep.stop()
 
 	if direction != 0:
 		sprite.flip_h = direction < 0
 
 func handle_normal_movement(delta):
+	var velocity = self.velocity
 	var direction = 0
 
 	if Input.is_action_pressed("left"):
@@ -159,21 +165,39 @@ func handle_normal_movement(delta):
 	if Input.is_action_pressed("right"):
 		direction += 1
 
-	velocity.x = direction * SPEED
+	var target_speed = direction * SPEED
+	var accel = 10.0 if is_on_floor() else 4.0
+	velocity.x = lerp(velocity.x, target_speed, delta * accel)
 
 	if direction != 0:
 		player_sprite.flip_h = direction > 0
 
 	if not is_on_floor():
 		velocity.y += GRAVITY * delta
+	else:
+		coyote_timer = coyote_time
 
-	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
+	if Input.is_action_just_pressed("jump"):
+		jump_buffer_timer = jump_buffer_time
+	else:
+		jump_buffer_timer -= delta
+
+	coyote_timer -= delta
+	if jump_buffer_timer > 0 and coyote_timer > 0:
 		velocity.y = JUMP_VELOCITY
-	
-	if is_possessed:
-		enemy.sprite_2d.play("chase")
-	
+		jump_buffer_timer = 0
+		coyote_timer = 0
+
+	if not is_on_floor():
+		player_sprite.play("jump")
+	elif direction != 0:
+		player_sprite.play("chase")
+	else:
+		player_sprite.play("default")
+
+	self.velocity = velocity
 	move_and_slide()
+
 
 func _input(event):
 	if event.is_action_pressed("possess"):
@@ -212,12 +236,10 @@ func _on_player_area_exited(area: Area2D):
 
 func handle_possession_input():
 	if not is_possessed:
-		# only keep enemies that can actually be possessed
 		var valid = in_range_enemies.filter(func(e):
 			return e.is_possessable
 		)
 		if valid.size() > 0:
-			# pick closest among the valid ones
 			enemy = get_closest_enemy_from_list(valid)
 			if enemy:
 				possess_enemy()
@@ -235,27 +257,31 @@ func get_closest_enemy():
 			closest = e
 			closest_dist = dist
 	return closest
+	
 func possess_enemy():
 	if enemy == null:
 		return
+
 	enemy.possessing_sound.play()
 	is_possessed = true
 	move_light_to_enemy()
 	collision_shape_2d.disabled = true
+
 	current_zoom_level += 0.1
 	camera_2d.zoom = Vector2(current_zoom_level, current_zoom_level)
 	update_parallax_limits()
 	
 	is_possessing_animation_running = true
 	player_sprite.play("possessing")
+
 	if enemy != null:
 		enemy.on_possess()
-		
+
 	await player_sprite.animation_finished
 
 	if not is_possessing_animation_running:
 		return
-	
+
 	hide()
 	$PossessTime.start()
 	$PossessHalfTime.start()
@@ -265,66 +291,55 @@ func unpossess_enemy():
 	is_possessed = false
 	player_sprite.play("default")
 	show()
-	
+
 	if enemy != null:
 		var enemy_sprite = enemy.get_node("Sprite2D")
-		var direction = -1 if enemy_sprite.flip_h else 1  # Get enemy's facing direction
+		var direction = -1 if enemy_sprite.flip_h else 1
 		var target_position = enemy.global_position + Vector2(unpossess_x * direction, unpossess_y)
-		
-		# Temporary debug visualization
-		Engine.time_scale = 0.5  # Slow down game temporarily
-		await get_tree().create_timer(0.3).timeout
-		Engine.time_scale = 1.0
-		
-		# Pre-collision check with raycast
+
 		var space_state = get_world_2d().direct_space_state
 		var query = PhysicsRayQueryParameters2D.create(
 			enemy.global_position,
 			target_position,
-			1 << 0,  # Collision layer for walls (adjust based on your project)
-			[self, enemy]  # Exclude player and enemy from raycast
+			1 << 0,
+			[self, enemy]
 		)
 		var ray_result = space_state.intersect_ray(query)
-		
-		# Adjust position based on raycast result
 		if ray_result:
-			print("Wall detected at: ", ray_result.position)
 			target_position = ray_result.position - Vector2(direction * 2, 0)
-		
-		# Position player with collision disabled
+
 		collision_shape_2d.disabled = true
 		global_position = target_position
+		await get_tree().process_frame
 		collision_shape_2d.disabled = false
-		
-		# Resolve collisions
+
 		var max_attempts = 3
 		for i in range(max_attempts):
 			var collision = move_and_collide(Vector2.ZERO, true, 0.001)
 			if collision:
-				print("Collision detected with: ", collision.get_collider().name)
 				var push_vector = collision.get_normal() * 16
 				global_position += push_vector
-				# Visual feedback
 				modulate = Color.RED
 				await get_tree().create_timer(0.1).timeout
 				modulate = Color.WHITE
 			else:
 				break
-		
-		# Final safety check
-		var final_collision = move_and_collide(Vector2.ZERO, true, 0.001)
-		if final_collision:
-			print("Emergency vertical adjustment")
+
+		if move_and_collide(Vector2.ZERO, true, 0.001):
 			global_position.y -= 32
 			modulate = Color.BLUE
 			await get_tree().create_timer(0.1).timeout
 			modulate = Color.WHITE
-		
-		# Clean up enemy reference
+
+		camera_2d.position_smoothing_enabled = false
+		camera_2d.global_position = global_position + Vector2(0, camera_y_offset)
+		await get_tree().process_frame
+		await get_tree().process_frame
+		camera_2d.position_smoothing_enabled = true
+
 		enemy.on_unpossess()
 		enemy = null
 
-	# Reset camera and timers
 	$PossessTime.stop()
 	$PossessHalfTime.stop()
 	is_zooming_and_shaking = false
@@ -333,6 +348,7 @@ func unpossess_enemy():
 	camera_2d.zoom = Vector2.ONE
 	camera_2d.offset = Vector2.ZERO
 	update_parallax_limits()
+
 	
 func take_damage(amount: int, isShake: bool):
 	if (isShake):

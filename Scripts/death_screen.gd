@@ -24,7 +24,7 @@ func show_death_screen():
 	overlay.show()
 
 	var tween = create_tween()
-	tween.tween_property(overlay, "color:a", 1.0, 1.0) # Fade in overlay
+	tween.tween_property(overlay, "color:a", 1.0, 1.0)
 
 	await get_tree().create_timer(1.0).timeout
 
